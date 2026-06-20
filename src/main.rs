@@ -33,6 +33,10 @@ fn main() {
                     let input_file = split[0][4..].trim();
                     engine::asm::run(input_file, output_file);
                 }
+                _ if command.starts_with("dis") =>{
+                    let file = command[4..].trim();
+                    engine::dis::run(file);
+                }
                 _ => {}
             }
         }
