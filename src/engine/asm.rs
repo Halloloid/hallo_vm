@@ -6,10 +6,10 @@ pub fn run(file_to_read: &str, file_to_write: &str) {
     let path_write = Path::new(file_to_write);
     let data = fs::read_to_string(path).expect("Unabel to read The file");
     let cmds = to_asm_cmds(data);
-    let mut v: Vec<u8> = Vec::new();
-    v.extend([0x4D,0x56,0x4D,0x00]);
-    v.push(0x01); // as its my first version
-    v.push(cmds.len() as u8);
+    let mut k: Vec<u8> = Vec::new();
+    k.extend([0x4D,0x56,0x4D,0x00]);
+    k.push(1); // as its my first version
+    let mut v = Vec::<u8>::new();
     for i in cmds {
         match i.as_str() {
             "POP" => v.push(encode(Op::Pop)[0]),
@@ -45,7 +45,12 @@ pub fn run(file_to_read: &str, file_to_write: &str) {
         }
     }
 
-    fs::write(path_write, v).expect("Unabel to Write");
+    let lenght = v.len() as u32;
+    k.extend(lenght.to_be_bytes()); // for exactly 4 bytes
+
+    k.extend(v);
+
+    fs::write(path_write, k).expect("Unabel to Write");
 }
 
 fn to_asm_cmds(data: String) -> Vec<String> {

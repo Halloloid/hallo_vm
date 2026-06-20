@@ -21,7 +21,7 @@ pub fn run(file: &str) {
         {
             if let Some(version) = data.next() {
                 if *version == 1 {
-                    let _ = data.next();
+                    for _ in 0..4 {data.next();} // skiping the length bytes
                     while let Some(i) = data.next() {
                         let mut v = Vec::<u8>::new();
                         if *i == 1 {
