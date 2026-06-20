@@ -1,3 +1,4 @@
+#[derive(Debug, Clone, Copy, PartialEq)]
 pub enum Op {
     Push(i64),
     Pop,
@@ -76,6 +77,6 @@ pub fn decode(v: &[u8]) -> Result<(Op, u8), DecodeError> {
             }
             Ok((Op::Store(v[1]), 2))
         },
-        _ => Err(DecodeError::UnknownOpcode(v[1])),
+        _ => Err(DecodeError::UnknownOpcode(v[0])),
     }
 }
