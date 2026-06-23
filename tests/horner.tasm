@@ -1,0 +1,26 @@
+; 3x^3 + 2x^2 + 5x + 7 at x = 11
+; Horner's method: ((3x + 2)x + 5)x + 7
+; expected output: 4297
+; x is stored in global slot 0
+
+        PUSH 11         ; [11]
+        STORE 0         ; []         globals[0] = 11
+
+        PUSH 3          ; [3]
+        LOAD 0          ; [3, 11]
+        MUL             ; [33]
+        PUSH 2          ; [33, 2]
+        ADD             ; [35]       3x + 2
+
+        LOAD 0          ; [35, 11]
+        MUL             ; [385]
+        PUSH 5          ; [385, 5]
+        ADD             ; [390]      (3x + 2)x + 5
+
+        LOAD 0          ; [390, 11]
+        MUL             ; [4290]
+        PUSH 7          ; [4290, 7]
+        ADD             ; [4297]     ((3x + 2)x + 5)x + 7
+
+        PRINT           ; []
+        HALT

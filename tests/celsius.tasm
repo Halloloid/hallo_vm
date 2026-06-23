@@ -1,0 +1,14 @@
+; Celsius to Fahrenheit: F = (C * 9 / 5) + 32
+; input: 100 C
+; expected output: 212
+; integer ops only: multiply before divide to avoid truncation
+
+        PUSH 100        ; [100]
+        PUSH 9          ; [100, 9]
+        MUL             ; [900]
+        PUSH 5          ; [900, 5]
+        DIV             ; [180]
+        PUSH 32         ; [180, 32]
+        ADD             ; [212]
+        PRINT           ; []
+        HALT

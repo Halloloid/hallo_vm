@@ -1,0 +1,17 @@
+; trap: truncated instruction
+; Like unknown opcode, this cannot be assembled normally
+; because your assembler always writes complete instructions.
+;
+; To test manually:
+;   1. assemble a program with PUSH in it
+;   2. open the .tbc in a hex editor
+;   3. delete the last few bytes of the PUSH operand
+;      so it has fewer than 8 operand bytes
+;   4. run minivm run truncated.tbc
+;   expected: trap at ip=0x????: truncated instruction
+;
+; Alternatively write a Rust unit test in vm.rs that
+; feeds a raw &[u8] with an incomplete PUSH directly
+; to your decode function and asserts Err(DecodeError::Truncated)
+
+        HALT

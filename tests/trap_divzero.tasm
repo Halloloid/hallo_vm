@@ -1,0 +1,7 @@
+; trap: division by zero
+; expected: trap at ip=0x0013: div by zero
+
+        PUSH 10         ; [10]
+        PUSH 0          ; [10, 0]
+        DIV             ; trap! b=0
+        HALT

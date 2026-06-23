@@ -1,0 +1,14 @@
+; trap: unknown opcode
+; This cannot be written in .tasm because your assembler
+; only emits valid opcodes. Instead, hand-patch the .tbc
+; after assembling, or write a small Rust test that injects
+; an invalid byte (e.g. 0x99) into the code section directly.
+;
+; To test manually:
+;   1. assemble any valid program to get a .tbc
+;   2. open the .tbc in a hex editor
+;   3. change the first code byte to 0x99
+;   4. run minivm run patched.tbc
+;   expected: trap at ip=0x0000: unknown opcode 0x99
+
+        HALT

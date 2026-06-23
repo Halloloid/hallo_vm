@@ -1,0 +1,15 @@
+; a^2 + b^2 for a=12, b=35
+; each value pushed exactly once, uses DUP and STORE/LOAD
+; expected output: 1369
+
+        PUSH 12         ; [12]       push a once
+        DUP             ; [12, 12]   duplicate for squaring
+        MUL             ; [144]      a^2
+
+        PUSH 35         ; [144, 35]  push b once
+        DUP             ; [144, 35, 35]
+        MUL             ; [144, 1225] b^2
+
+        ADD             ; [1369]     a^2 + b^2
+        PRINT           ; []
+        HALT

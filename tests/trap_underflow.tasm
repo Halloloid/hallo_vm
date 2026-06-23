@@ -1,0 +1,6 @@
+; trap: stack underflow
+; POP on an empty stack
+; expected: trap at ip=0x0000: stack underflow (POP on empty stack)
+
+        POP
+        HALT

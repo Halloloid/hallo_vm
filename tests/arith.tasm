@@ -1,0 +1,14 @@
+; (7 + 3) * (9 - 4) / 5
+; expected output: 10
+
+        PUSH 7          ; [7]
+        PUSH 3          ; [7, 3]
+        ADD             ; [10]
+        PUSH 9          ; [10, 9]
+        PUSH 4          ; [10, 9, 4]
+        SUB             ; [10, 5]
+        MUL             ; [50]
+        PUSH 5          ; [50, 5]
+        DIV             ; [10]
+        PRINT           ; []
+        HALT
