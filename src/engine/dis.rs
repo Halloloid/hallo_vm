@@ -24,6 +24,11 @@ pub fn run(file: &str) {
                     }
                     c -= 1;
                 }
+            } else if *i == 64 || *i == 65 {
+                v.push(*i);
+                if let Some(l) = data.next() {
+                    v.push(*l);
+                }
             } else {
                 v.push(*i);
             }
@@ -32,10 +37,14 @@ pub fn run(file: &str) {
                 Ok((op, _)) => {
                     println!("{}", format!("{:?}", op).to_uppercase());
                 }
-                Err(DecodeError::Truncated) => todo!(),
-                Err(DecodeError::UnknownOpcode(c)) => {
-                    println!("Unknnown Code:{:02x}", c)
-                }
+                Err(DecodeError::Truncated) => {
+                    println!("trap : Truncated");
+                    break;
+                },
+                Err(DecodeError::UnknownOpcode(c)) =>{
+                    println!("trap at ip={:#06x}: Unknown Opcode",c);
+                    break;
+                },
             }
         }
     } else {
