@@ -41,4 +41,24 @@ pub mod helpers {
         }
         false
     }
+
+    pub fn check_file_length<'a, I>(data: &mut I, file_size: usize) -> bool
+    where
+        I: Iterator<Item = &'a u8>,
+    {
+        let mut given_len: [u8; 4] = [0; 4];
+        let mut c = 0;
+        while c!=4 && let Some(byte) = data.next() {
+            given_len[c] = *byte;
+            c += 1;
+        }
+
+        let given_len = u32::from_be_bytes(given_len);
+        let actual_len = (file_size - 9) as u32;
+
+        if given_len == actual_len {
+            return true;
+        }
+        false
+    }
 }
