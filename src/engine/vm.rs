@@ -2,12 +2,12 @@ use std::{fs, path::Path};
 
 use crate::engine::{
     helpers::{check_file_length, check_version, file_type_check},
-    isa::{Op, decode},
+    isa::{DecodeError, Op, decode},
 };
 
 pub fn execute(file: &str, trace: bool) -> Result<(), String> {
     let mut stack = Vec::<i64>::new();
-    // let mut globals: [i64; 256] = [0; 256];
+    let mut globals: [i64; 256] = [0; 256];
     let mut ip: u8 = 0;
 
     let path = Path::new(file);
@@ -39,6 +39,11 @@ pub fn execute(file: &str, trace: bool) -> Result<(), String> {
                     }
                     c -= 1;
                 }
+            } else if *byte == 64 || *byte == 65 {
+                v.push(*byte);
+                if let Some(l) = data.next() {
+                    v.push(*l);
+                }
             } else {
                 v.push(*byte);
             }
@@ -61,14 +66,14 @@ pub fn execute(file: &str, trace: bool) -> Result<(), String> {
 
                             stack.push(a);
                             stack.push(a);
-                        },
+                        }
                         Op::Swap => {
                             let a = pop_stack(&mut stack, ip)?;
                             let b = pop_stack(&mut stack, ip)?;
 
                             stack.push(a);
                             stack.push(b);
-                        },
+                        }
                         Op::Add => {
                             let a = pop_stack(&mut stack, ip)?;
                             let b = pop_stack(&mut stack, ip)?;
@@ -80,39 +85,44 @@ pub fn execute(file: &str, trace: bool) -> Result<(), String> {
                             let b = pop_stack(&mut stack, ip)?;
 
                             stack.push(b - a);
-                        },
+                        }
                         Op::Mul => {
                             let a = pop_stack(&mut stack, ip)?;
                             let b = pop_stack(&mut stack, ip)?;
 
                             stack.push(b * a);
-                        },
+                        }
                         Op::Div => {
                             let a = pop_stack(&mut stack, ip)?;
                             let b = pop_stack(&mut stack, ip)?;
 
                             if a == 0 {
-                                Err(format!("trap at ip={:#06x}: DIV by Zero",ip))?;
+                                Err(format!("trap at ip={:#06x}: DIV by Zero", ip))?;
                             }
-                            
+
                             stack.push(b / a);
-                        },
+                        }
                         Op::Mod => {
                             let a = pop_stack(&mut stack, ip)?;
                             let b = pop_stack(&mut stack, ip)?;
 
                             if a == 0 {
-                                Err(format!("trap at ip={:#06x}: MOD by Zero",ip))?;
+                                Err(format!("trap at ip={:#06x}: MOD by Zero", ip))?;
                             }
-                            
+
                             stack.push(b % a);
-                        },
+                        }
                         Op::Neg => {
                             let a = pop_stack(&mut stack, ip)?;
                             stack.push(-a);
-                        },
-                        Op::Load(_) => todo!(),
-                        Op::Store(_) => todo!(),
+                        }
+                        Op::Load(n) => {
+                            stack.push(globals[n as usize]);
+                        }
+                        Op::Store(n) => {
+                            let a = pop_stack(&mut stack, ip)?;
+                            globals[n as usize] = a;
+                        }
                         Op::Print => {
                             let n = pop_stack(&mut stack, ip)?;
                             println!("{n}");
@@ -121,10 +131,10 @@ pub fn execute(file: &str, trace: bool) -> Result<(), String> {
                     }
                     ip += wide;
                 }
-                Err(_) => todo!(),
+                Err(DecodeError::UnknownOpcode(b)) => Err(format!("trap at ip={:#06x}: Unknown Opcode", b))?,
+                Err(DecodeError::Truncated) => Err(format!("trap at ip={:#06x}: Truncated Instruction",ip))?,
             }
         }
     }
-
     Ok(())
 }
