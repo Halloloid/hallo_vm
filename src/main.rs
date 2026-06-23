@@ -41,7 +41,10 @@ fn main() {
                     let trace = command.contains("--trace");
                     let vec:Vec<&str> = command[4..].split_whitespace().collect();
                     let file = vec[0].trim();
-                    engine::vm::execute(file, trace);
+                    if let Err(trap) = engine::vm::execute(file, trace){
+                        eprintln!("{}",trap);
+                        break;
+                    }
                 }
             
                 _ => {}
