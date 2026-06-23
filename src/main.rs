@@ -37,6 +37,13 @@ fn main() {
                     let file = command[4..].trim();
                     engine::dis::run(file);
                 }
+                _ if command.starts_with("run") => {
+                    let trace = command.contains("--trace");
+                    let vec:Vec<&str> = command[4..].split_whitespace().collect();
+                    let file = vec[0].trim();
+                    engine::vm::execute(file, trace);
+                }
+            
                 _ => {}
             }
         }
